@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Update package list and install HAProxy
+echo "Updating package list and installing HAProxy..."
+apt update
+apt install -y haproxy
+
+# Ensure HAProxy is enabled to start on boot
+systemctl enable haproxy
+
+# Configure HAProxy for round-robin load balancing
+echo "Configuring HAProxy..."
+
+cat <<EOL > /etc/haproxy/haproxy.cfg
+global
+    log /dev/log local0
+    maxconn 200
+
+defaults
+    log     global
+    option  httplog
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web-01 44.202.2.216:80 check
+    server web-02 3.94.187.125:80 check
+
+EOL
+
+# Restart HAProxy to apply changes
+echo "Restarting HAProxy..."
+systemctl restart haproxy
+
+# Verify HAProxy status
+echo "Checking HAProxy status..."
+systemctl status haproxy
+
+# Output the IP of the load balancer for testing purposes
+echo "HAProxy load balancer is set up and running. You can test it using IP: 52.91.239.111"

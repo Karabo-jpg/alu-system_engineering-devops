@@ -1,0 +1,20 @@
+# Original HAProxy Configuration
+global
+    log /dev/log local0
+    maxconn 200
+
+defaults
+    log     global
+    option  httplog
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web-01 44.202.2.216:80 check
+    server web-02 3.94.187.125:80 check
