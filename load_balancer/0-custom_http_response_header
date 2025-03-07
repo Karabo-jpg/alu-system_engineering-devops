@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
-# Customizing a 404-error_page and adding custom HTTP header
+# Customizing a 404-error_page
 
-# Update Packages before performing installations
-sudo apt-get update -y
+# Updating Packages before performing installations
+sudo apt-get update
 sudo apt-get install -y nginx
 
-# Create an index.html page to verify server
+# Creating an index.html page
 echo "Holberton School" | sudo tee /var/www/html/index.html
 
-# Perform a "moved permanently redirection" (301) for the given URL
+# Performing a "moved permanently redirection" (301)
 new_string="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/Lydia02 permanent;"
 sudo sed -i "s/server_name _;/$new_string/" /etc/nginx/sites-enabled/default
 
-# Create a custom 404 error page
+# Creating a 404 Custom error page
 echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+new_string="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
 
-# Update nginx configuration to handle the 404 error page and set custom headers
-new_string="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}\n\tadd_header X-Served-By $HOSTNAME;"
 sudo sed -i "s/listen 80 default_server;/$new_string/" /etc/nginx/sites-enabled/default
 
-# Add the custom header to track which web server is responding
+# Creating an HTTP response header (custom header X-Served-By)
+# Set the header X-Served-By with the hostname of the server
 sudo sed -i "/server_name _/a add_header X-Served-By $HOSTNAME;" /etc/nginx/sites-enabled/default
 
-# Test the nginx configuration for syntax errors
+# Testing configurations for syntax errors
 sudo nginx -t
 
 # Restart nginx after implementing changes
