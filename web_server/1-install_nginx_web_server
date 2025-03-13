@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Install nginx webserver on a new Ubuntu machine
+# This script installs Nginx, sets up a custom page, and ensures Nginx listens on port 80.
 
-sudo apt-get update
-sudo apt-get install -y nginx
+# Update package list and install Nginx without prompts
+apt-get update -y
+apt-get install nginx -y
 
-echo "Holberton School" | sudo tee /var/www/html/index.html
+# Create a custom HTML page to meet the requirement
+echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
 
-sudo nginx -t
-sudo service nginx start
+# Restart Nginx without using systemctl
+service nginx restart
