@@ -21,3 +21,4 @@ sudo service nginx status
 # Confirm Nginx is serving the expected page
 curl -s http://localhost
 
+# Nginx installation script for Task 1
