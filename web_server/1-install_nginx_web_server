@@ -4,14 +4,14 @@
 sudo apt-get update -y
 sudo apt-get install nginx -y
 
-# Start Nginx service without using systemctl
-sudo service nginx start
-
-# Configure Nginx to listen on port 80 (this should be the default setting)
+# Allow HTTP traffic on port 80 through the firewall
 sudo ufw allow 'Nginx HTTP'
 
-# Ensure the default Nginx page contains "Holberton School"
+# Modify the default Nginx page to include "Holberton School"
 echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
 
-# Restart Nginx to ensure configuration is reloaded
+# Restart Nginx without using systemctl
 sudo service nginx restart
+
+# Ensure Nginx is listening on port 80
+sudo service nginx status
