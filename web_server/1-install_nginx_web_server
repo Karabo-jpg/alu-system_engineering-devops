@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
-# This script installs Nginx, sets up a custom page, and ensures Nginx listens on port 80.
+# Installs Nginx and configures it to listen on port 80 and display "Holberton School" at the root URL
 
-# Update package list and install Nginx without prompts
-apt-get update -y
-apt-get install nginx -y
+# Update package lists and install Nginx
+sudo apt-get update -y
+sudo apt-get install -y nginx
 
-# Create a custom HTML page to meet the requirement
-echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+# Create a custom index.html file with the desired content
+echo "Holberton School" | sudo tee /var/www/html/index.html
 
-# Restart Nginx without using systemctl
-service nginx restart
+# Update the Nginx default server block configuration
+sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+    index index.html;
+    server_name _;
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF
+
+# Restart Nginx to apply changes
+sudo service nginx restart
