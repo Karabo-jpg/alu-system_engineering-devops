@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 # This script installs Nginx, configures it to listen on port 80, and ensures it serves a page containing "Holberton School"
 
-# Update the package list and install Nginx
+# Update package list and install nginx
 sudo apt-get update -y
 sudo apt-get install nginx -y
 
-# Allow HTTP traffic on port 80 through the firewall
+# Allow HTTP traffic through the firewall (Port 80)
 sudo ufw allow 'Nginx HTTP'
 
-# Modify the default Nginx page to include "Holberton School"
-echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
+# Create a new HTML page with "Holberton School" content
+echo "Holberton School" | sudo tee /var/www/html/index.html
 
-# Restart Nginx without using systemctl
+# Ensure nginx is configured to listen on port 80 (this should be default)
+# Restart Nginx to apply changes (without using systemctl)
 sudo service nginx restart
 
-# Ensure Nginx is listening on port 80
+# Check the Nginx status to confirm it's running
 sudo service nginx status
+
+# Confirm Nginx is serving the expected page
+curl -s http://localhost
+
