@@ -1,26 +1,17 @@
-#!/usr/bin/env bash
-# Installs Nginx and configures it to listen on port 80 and display "Holberton School" at the root URL
+#!/bin/bash
 
-# Update package lists and install Nginx
+# Update the package list and install Nginx
 sudo apt-get update -y
-sudo apt-get install -y nginx
+sudo apt-get install nginx -y
 
-# Create a custom index.html file with the desired content
-echo "Holberton School" | sudo tee /var/www/html/index.html
+# Start Nginx service without using systemctl
+sudo service nginx start
 
-# Update the Nginx default server block configuration
-sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    root /var/www/html;
-    index index.html;
-    server_name _;
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
-}
-EOF
+# Configure Nginx to listen on port 80 (this should be the default setting)
+sudo ufw allow 'Nginx HTTP'
 
-# Restart Nginx to apply changes
+# Ensure the default Nginx page contains "Holberton School"
+echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
+
+# Restart Nginx to ensure configuration is reloaded
 sudo service nginx restart
