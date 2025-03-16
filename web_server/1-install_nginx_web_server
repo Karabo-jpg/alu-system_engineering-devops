@@ -1,25 +1,21 @@
 #!/usr/bin/env bash
-# This script installs and configures Nginx to serve a page with only "Holberton School" on a clean Ubuntu server.
+# This script installs and configures Nginx to serve a page containing "Holberton School".
 
-# Update package lists and install nginx
+# Update package list and install nginx
 sudo apt-get update -y
 sudo apt-get install nginx -y
 
-# Ensure Nginx is started and enabled to start on boot
-sudo service nginx start
-sudo systemctl enable nginx
-
-# Adjust firewall to allow 'Nginx HTTP' traffic
+# Allow Nginx HTTP traffic through the firewall
 sudo ufw allow 'Nginx HTTP'
 
-# Ensure Nginx is running and listening on port 80
-sudo systemctl status nginx
+# Ensure nginx is started and enabled to run on boot
+sudo service nginx start
 
-# Set the correct content in the default index.html file served by Nginx
+# Set the index.html file to contain only "Holberton School"
 echo "Holberton School" | sudo tee /var/www/html/index.html
 
-# Restart Nginx to apply the changes (not using systemctl, as per instructions)
+# Restart nginx without using systemctl, as per the requirement
 sudo service nginx restart
 
-# Output success message
-echo "Nginx has been installed and configured. The page is serving 'Holberton School'."
+# Output confirmation
+echo "Nginx has been installed and the page is serving 'Holberton School'."
