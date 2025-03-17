@@ -1,26 +1,25 @@
 #!/usr/bin/env bash
 # This script installs and configures nginx on a new Ubuntu server.
 
-# Install nginx
-sudo apt-get update
-sudo apt-get install -y nginx
+# Update package list and install nginx
+sudo apt-get update -y
+sudo apt-get install nginx -y
 
 # Allow 'Nginx HTTP' through the firewall
 sudo ufw allow 'Nginx HTTP'
 
-# Start nginx service (without using systemctl)
+# Start nginx without using systemctl
 sudo service nginx start
 
-# Create an index.html page with the content "Holberton School"
+# Create an index.html page with the required content
 echo "Holberton School" | sudo tee /var/www/html/index.html
 
-# Verify nginx is running and listening on port 80
-sudo ss -tuln | grep :80
+# Restart nginx to load the new page
+sudo service nginx restart
 
-# Test if the page contains "Holberton School" by querying localhost
-curl -s http://localhost | grep "Holberton School" || { echo "Holberton School not found on the page"; exit 1; }
+# Check that nginx is running and listening on port 80
+sudo ss -tuln | grep ':80'
 
-# Ensure the HTTP response code is 200
-curl -s -o /dev/null -w "%{http_code}" http://localhost | grep -q "200" || { echo "Page did not return 200"; exit 1; }
-
-echo "Nginx is properly configured and running."
+# Verify the content and the response code
+curl -s http://localhost | grep "Holberton School"
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost
