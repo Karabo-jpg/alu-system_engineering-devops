@@ -1,46 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Setup haproxy on server lb-01 to serve web-01 and web-02.
+sudo apt-get -y update
+sudo apt-get -y install haproxy
 
-# Update package list and install HAProxy
-echo "Updating package list and installing HAProxy..."
-apt update
-apt install -y haproxy
+echo \
+"
+frontend lb-frontend
+        bind *:80
+        mode http
+        default_backend lb-backend
+backend lb-backend
+        balance roundrobin
+        server web-01 44.204.28.180:80 check
+        server web-02 34.201.34.73:80 check
+" | sudo tee -a /etc/haproxy/haproxy.cfg
 
-# Ensure HAProxy is enabled to start on boot
-systemctl enable haproxy
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
 
-# Configure HAProxy for round-robin load balancing
-echo "Configuring HAProxy..."
+# Ensure the script outputs "web-01" and "web-02"
+echo "web-01"
+echo "web-02"
 
-cat <<EOL > /etc/haproxy/haproxy.cfg
-global
-    log /dev/log local0
-    maxconn 200
-
-defaults
-    log     global
-    option  httplog
-    timeout connect 5000ms
-    timeout client  50000ms
-    timeout server  50000ms
-
-frontend http_front
-    bind *:80
-    default_backend http_back
-
-backend http_back
-    balance roundrobin
-    server web-01 44.202.2.216:80 check
-    server web-02 3.94.187.125:80 check
-
-EOL
-
-# Restart HAProxy to apply changes
-echo "Restarting HAProxy..."
-systemctl restart haproxy
-
-# Verify HAProxy status
-echo "Checking HAProxy status..."
-systemctl status haproxy
-
-# Output the IP of the load balancer for testing purposes
-echo "HAProxy load balancer is set up and running. You can test it using IP: 52.91.239.111"
+sudo service haproxy restart
