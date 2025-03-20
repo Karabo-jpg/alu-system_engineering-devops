@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Configure Apache to respond to localhost
 
-echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf
-a2enconf servername
-echo "Hello Holberton" > /var/www/html/index.html
-service apache2 start
+# Install apache2 if it's not installed
+sudo apt-get update
+sudo apt-get install -y apache2
+
+# Configure apache to respond to localhost
+echo "ServerName localhost" | sudo tee /etc/apache2.conf
+
+# Start apache2
+sudo service apache2 start
