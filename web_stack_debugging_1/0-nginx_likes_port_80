@@ -1,8 +1,24 @@
 #!/usr/bin/env bash
 # Fix nginx default files. Symbolic link is broken.
 
-rm /etc/nginx/sites-enabled/default
+# Step 1: Remove the broken symbolic link for default site (use sudo to avoid permission issues)
+sudo rm -f /etc/nginx/sites-enabled/default
 
-ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Step 2: Create a symbolic link from sites-available to sites-enabled (ensure sudo is used)
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-service nginx restart
+# Step 3: Check nginx configuration
+sudo nginx -t
+
+# Step 4: Restart nginx service
+sudo service nginx restart
+
+# Step 5: Confirm if nginx is running
+sudo service nginx status
+
+# Step 6: If nginx is running, print a success message
+if sudo service nginx status | grep "active (running)"; then
+    echo "Nginx is now running and listening on port 80."
+else
+    echo "There was an issue starting Nginx."
+fi
