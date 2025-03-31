@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script configures Nginx to run as the nginx user and listens on port 8080
 
 # Step 1: Ensure Nginx runs as the nginx user
 echo "Configuring Nginx to run as the nginx user..."
