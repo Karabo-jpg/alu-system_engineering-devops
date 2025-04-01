@@ -20,16 +20,16 @@ sudo systemctl restart nginx
 
 # Check if Nginx is running as nginx user
 echo "Checking if Nginx is running as nginx user..."
-pgrep -u nginx nginx > /dev/null
-if [ $? -eq 0 ]; then
-  echo "Nginx is running as nginx user"
+nginx_pid=$(pgrep -u nginx nginx)
+if [ -n "$nginx_pid" ]; then
+  echo "Nginx is running as nginx user with PID $nginx_pid"
 else
   echo "Nginx is NOT running as nginx user"
 fi
 
 # Check if Nginx is listening on port 8080
 echo "Checking if Nginx is listening on port 8080..."
-ss -tulnp | grep -q ":8080"
+ss -tulnp | grep -q ':8080'
 if [ $? -eq 0 ]; then
   echo "Nginx is listening on port 8080"
 else
