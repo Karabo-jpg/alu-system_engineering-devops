@@ -16,7 +16,7 @@ sudo systemctl restart nginx
 
 # Check if Nginx is running as nginx user
 echo "Checking if Nginx is running as nginx user..."
-if ps aux | grep "[n]ginx" | awk '{print $1}' | grep -q "nginx"; then
+if pgrep -u nginx nginx > /dev/null; then
   echo "Nginx is running as nginx user"
 else
   echo "Nginx is NOT running as nginx user"
