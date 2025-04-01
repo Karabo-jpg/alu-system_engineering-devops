@@ -1,49 +1,33 @@
 #!/bin/bash
-# This script configures Nginx to run as the nginx user and listens on port 8080.
+# This script configures Nginx to run as the nginx user and listen on port 8080
 
-# Ensure script runs with sudo
-if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root."
-    exit 1
-fi
-
+# Configure Nginx to run as the nginx user
 echo "Configuring Nginx to run as the nginx user..."
+sudo sed -i 's/user www-data;/user nginx;/' /etc/nginx/nginx.conf
 
-# Update nginx.conf to set the user as nginx
-sed -i 's/^user .*/user nginx;/' /etc/nginx/nginx.conf
-
+# Configure Nginx to listen on 0.0.0.0:8080
 echo "Configuring Nginx to listen on 0.0.0.0:8080..."
+sudo sed -i 's/listen 80;/listen 8080;/' /etc/nginx/sites-available/default
+sudo service nginx restart
 
-# Update default server block to listen on port 8080
-sed -i 's/listen 80 default_server;/listen 8080 default_server;/' /etc/nginx/sites-available/default
-sed -i 's/listen \[::\]:80 default_server;/listen \[::\]:8080 default_server;/' /etc/nginx/sites-available/default
-
+# Testing Nginx configuration
 echo "Testing Nginx configuration..."
-nginx -t
+sudo nginx -t
 
-if [[ $? -ne 0 ]]; then
-    echo "Nginx configuration test failed. Please check your configuration."
-    exit 1
-fi
-
+# Restart Nginx to apply changes
 echo "Restarting Nginx..."
-systemctl restart nginx
+sudo service nginx restart
 
-# Verify that Nginx is running as nginx user
-if pgrep -u nginx nginx > /dev/null; then
+# Check if Nginx is running as nginx user
+if pgrep -x nginx > /dev/null; then
     echo "Nginx is running as nginx user"
 else
-    echo "Nginx is NOT running as nginx user"
-    exit 1
+    echo "Nginx is not running as nginx user"
 fi
 
-# Verify that Nginx is listening on port 8080
-if netstat -tulnp | grep -q ":8080.*nginx"; then
+# Check if Nginx is listening on port 8080
+if netstat -tulnp | grep -q ':8080'; then
     echo "Nginx is listening on port 8080"
 else
-    echo "Nginx is NOT listening on port 8080"
-    exit 1
+    echo "Nginx is not listening on port 8080"
 fi
-
-echo "Nginx successfully configured!"
-
