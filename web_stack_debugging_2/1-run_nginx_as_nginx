@@ -1,36 +1,30 @@
 #!/bin/bash
-# This script configures Nginx to run as the nginx user and listens on port 8080
+# Configures Nginx to run as the nginx user and listen on port 8080
 
-# Ensure nginx is running as the nginx user
 echo "Configuring Nginx to run as the nginx user..."
 sudo sed -i 's/user www-data;/user nginx;/g' /etc/nginx/nginx.conf
 
-# Ensure nginx listens on port 8080
 echo "Configuring Nginx to listen on 0.0.0.0:8080..."
 sudo sed -i 's/listen 80;/listen 8080 default_server;/g' /etc/nginx/sites-available/default
 sudo sed -i 's/listen \[::\]:80;/listen \[::\]:8080 default_server;/g' /etc/nginx/sites-available/default
 
-# Test nginx configuration
 echo "Testing Nginx configuration..."
 sudo nginx -t
 
-# Restart nginx
 echo "Restarting Nginx..."
 sudo systemctl restart nginx
 
 # Check if Nginx is running as nginx user
 echo "Checking if Nginx is running as nginx user..."
-nginx_pid=$(pgrep -u nginx nginx)
-if [ -n "$nginx_pid" ]; then
-  echo "Nginx is running as nginx user with PID $nginx_pid"
+if ps aux | grep "[n]ginx" | awk '{print $1}' | grep -q "nginx"; then
+  echo "Nginx is running as nginx user"
 else
   echo "Nginx is NOT running as nginx user"
 fi
 
 # Check if Nginx is listening on port 8080
 echo "Checking if Nginx is listening on port 8080..."
-ss -tulnp | grep -q ':8080'
-if [ $? -eq 0 ]; then
+if ss -tulnp | grep -q ':8080'; then
   echo "Nginx is listening on port 8080"
 else
   echo "Nginx is NOT listening on port 8080"
